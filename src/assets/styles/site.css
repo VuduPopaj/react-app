@@ -16,3 +16,17 @@
     padding: 12px;
     text-align: center;
 }
+
+.input-form {
+    width:50%;
+    margin:24px auto;
+    
+}
+
+.rightBtn{
+    float: right;
+}
+
+.leftBtn{
+    float:left;
+}
