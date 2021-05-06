@@ -1,85 +1,104 @@
-import { useEffect, useState } from 'react';
-import { insert, update, read, remove } from '../services/apiService';
+import { useEffect, useState } from "react";
+import { insert, update, read, remove } from "../services/apiService";
 
-const Course = ({match, history}) => {
-
-const [id] = useState(match.params.id);
-const [course, setCourse] = useState({
-    _id: '0',
-    name: '',
-    points: 0
-});
-
-useEffect(() => {
-    if(id !== '0'){
-        read('courses', id, data => {
-            if(data) setCourse(data);
-        })
-    }
-}, [id]);
-
-function changeHandler(e) {
-setCourse({
-    ...course,
-    [e.target.name]: e.target.value
+const Course = ({ match, history }) => {
+  const [id] = useState(match.params.id);
+  const [course, setCourse] = useState({
+    _id: "0",
+    name: "",
+    points: 0,
   });
-}
 
-const back = () => {
-    history.push('/courses');
-}
+  const [validation, setValidation] = useState("");
 
-const save = () => {
-if(id === '0') {
-    insert('courses', course, data => {
-        if(data) return history.push('/courses');
-        console.log('There was error during save data');
-    })
-  } else {
-      update('course', id, course, data => {
-        if(data) return history.push('/courses');
-        console.log('There was error during save data');
-      })
+  useEffect(() => {
+    if (id !== "0") {
+      read("courses", id, (data) => {
+        if (data) setCourse(data);
+      });
+    }
+  }, [id]);
+
+  function changeHandler(e) {
+    setCourse({
+      ...course,
+      [e.target.name]: e.target.value,
+    });
   }
-}
 
-const del = () => {
- remove('courses', id, data => {
-     history.push('/courses');
- })
-}
+  const back = () => {
+    history.push("/courses");
+  };
 
-  return (<div className='container'>
+  const save = () => {
+    course._id = undefined;
+    if (!course.name || !course.points) {
+      setValidation("Required field!");
+    } else {
+      if (id === "0") {
+        insert("courses", course, (data) => {
+          if (data) return history.push("/courses/");
+          console.log("There was error during save data");
+        });
+      } else {
+        update("courses", id, course, (data) => {
+          if (data) return history.push("/courses/");
+          console.log("There was error during save data");
+        });
+      }
+    }
+  };
+
+  const del = () => {
+    remove("courses", id, (data) => {
+      history.push("/courses/");
+    });
+  };
+
+  return (
+    <div className="container">
       <h2>Course</h2>
-      <form className='input-form'>
-        <div style={{margin:'12px 0'}}>
-            <label htmlFor='name'>Course Name:</label>
-            <input type='text' 
-                   name='name' 
-                   value={course.name} 
-                   onChange={changeHandler} />
+      <form className="input-form">
+        <div style={{ margin: "12px 0" }}>
+          <label htmlFor="name">Course Name:</label>
+          <input
+            type="text"
+            name="name"
+            value={course.name}
+            onChange={changeHandler}
+          />
+          <div>{validation}</div>
         </div>
-        <div style={{margin:'12px 0'}}>
-            <label htmlFor='points'>Course points:</label>
-            <input type='text' 
-            name='points' 
+        <div style={{ margin: "12px 0" }}>
+          <label htmlFor="points">Course points:</label>
+          <input
+            type="text"
+            name="points"
             value={course.points}
-            onChange={changeHandler} />
+            onChange={changeHandler}
+          />
+          <div>{validation}</div>
         </div>
         <hr />
-        {id !== '0' && (
-        <div className='left'>
-            <button type='button'onClick={del}>DELETE</button>
-        </div>
-        )}  
-        <div className='right'>
-            <button type='button' onClick={back}>BACK</button>
-            &nbsp;&nbsp;
-            <button type='button' onClick={save}>SAVE</button>
+        {id !== "0" && (
+          <div className="left">
+            <button type="button" onClick={del}>
+              DELETE
+            </button>
+          </div>
+        )}
+        <div className="right">
+          <button type="button" onClick={back}>
+            BACK
+          </button>
+          &nbsp;&nbsp;
+          <button type="button" onClick={save}>
+            SAVE
+          </button>
         </div>
       </form>
-      </div>
-      );
-}
+    </div>
+  );
+};
 
 export default Course;
